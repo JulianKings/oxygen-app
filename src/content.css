@@ -65,6 +65,134 @@ body {
     grid-area: 2 / 1 / 3 / 2;
 }
 
+.content-box-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.convert-box {
+    border: 2px solid #FFFFFF;
+    background-color: #2E0039;
+    color: #fff;
+    margin-top: 51px;
+    width: calc(100% - 38px - 38px);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 21px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 38px; 
+}
+
+.convert-box .convert-box-title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 36px;
+    height: 35px;
+}
+
+.convert-box .convert-box-input {
+    display: flex;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+.convert-box .convert-box-input img {
+    height: 24px; width: 24px;
+    margin-left: 12px;
+    margin-right: 73px;
+}
+
+.convert-box .convert-box-input input, .convert-box .convert-box-input select {
+    background-color: #2E0039;
+    color: #fff;
+    outline: none;
+    border: 0px;
+    border-bottom: 1px solid white;
+    padding: 0; margin: 0;
+    height: 20px;
+    width: 218px;
+}
+
+.convert-box .convert-box-input input
+{
+    text-align: right;
+}
+
+.convert-box .convert-box-input select
+{
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url('./assets/down.png');
+    background-repeat: no-repeat, repeat;
+    background-position: right -9px top 50%, 0 0;
+    background-size: 32px auto, 100%;
+}
+
+/* For IE (thanks to @SaiManoj) */
+.convert-box .convert-box-input select::-ms-expand {
+    display: none;
+}
+
+/* Small fix to remove arrows on number input
+Chrome, Safari, Edge, Opera */
+.convert-box .convert-box-input input::-webkit-outer-spin-button,
+.convert-box .convert-box-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.convert-box .convert-box-input input[type=number] {
+    appearance: auto;
+    -moz-appearance: textfield;
+}
+
+.convert-box .convert-box-input label {
+    margin-left: 10px;
+}
+
+.convert-box .convert-box-extra {
+    display: flex;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.convert-box-extra .convert-box-save {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: flex-end;
+}
+
+.convert-box-extra .convert-box-save img {
+    height: 24px; width: 24px;
+}
+
+.convert-box-extra .convert-box-result {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.convert-box-result .convert-box-result-unit {
+    width: 84px;
+    margin-left: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    padding-bottom: 3px;
+}
+
+.convert-box-result .convert-box-result-value {
+    margin-left: 10px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
 .footer {
     grid-area: 3 / 1 / 4 / 2;
     background: #2E0039;
