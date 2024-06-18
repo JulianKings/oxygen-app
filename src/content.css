@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@font-face {
+    font-family: 'Offline Poppins';
+    src: url('./style/fonts/poppins.woff2') format('woff2'),
+         url('./style/fonts/poppins.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Poppins', 'Offline Poppins', 'Roboto', sans-serif;
+    font-size: 1.1rem;
+    background-color: #FFFFFF;
+}
+
+#root {
+    display: grid;
+    width: 100%; height: 100%;
+    grid-template-rows: 48px 1fr 39px;
+}
+
+.content-box {
+    max-width: 717px;
+    width: 100%;
+}
+
+.navigation, .content-holder, .footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navigation {
+    grid-area: 1 / 1 / 2 / 2;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.content-box-navigation {
+    display: flex;
+    align-items: center;
+}
+
+.navigation-picture img {
+    width: 32px; height: 32px;
+}
+
+.navigation-caption {
+    font-weight: 900;
+    font-size: 20px;
+    color: #2E0039;
+    line-height: 30px;
+    height: 31px;
+    margin-left: 9px;
+}
+
+.content-holder {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.footer {
+    grid-area: 3 / 1 / 4 / 2;
+    background: #2E0039;
+    font-size: 12px;
+    color: #FFFFFF;
+    line-height: 18px;
+}
+
+.content-box-footer {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.footer-item {
+    width: 108px;
+}

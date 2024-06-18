@@ -1,2 +1,2 @@
-# oxygen-app
+# Oxygen App
 Prueba técnica para Oxygen
