@@ -18,7 +18,7 @@ function ContentComponent()
     const inputRef = useRef(null);
 
     useEffect(() => {
-        fetch("http://localhost:3000/unit", {                
+        fetch("https://oxygen-app-fc0b4cf85cf7.herokuapp.com/unit", {                
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -206,7 +206,7 @@ function ContentComponent()
             if(serverStatus)
             {
                 const unitContent = inputValue + currentUnit + ' → ' + unitResult + goalUnit;
-                fetch("http://localhost:3000/unit/add", { 
+                fetch("https://oxygen-app-fc0b4cf85cf7.herokuapp.com/unit/add", { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

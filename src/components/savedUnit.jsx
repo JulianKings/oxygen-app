@@ -28,7 +28,7 @@ function SavedUnit({unit})
             const requestObject = {
                 unit_id: unit._id
             }
-            fetch("http://localhost:3000/unit/delete", { 
+            fetch("https://oxygen-app-fc0b4cf85cf7.herokuapp.com/unit/delete", { 
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
