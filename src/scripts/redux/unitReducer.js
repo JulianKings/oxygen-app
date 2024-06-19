@@ -2,15 +2,18 @@ import { populateData } from "../data/dataManager";
 
 export const ADD_UNIT = "ADD_UNIT";
 export const REMOVE_UNIT = "REMOVE_UNIT";
+export const UPDATE_UNIT_ARRAY = "UPDATE_UNIT_ARRAY";
 export const UPDATE_UNIT = "UPDATE_UNIT";
 export const UPDATE_GOAL_UNIT = "UPDATE_GOAL_UNIT";
 export const UPDATE_UNIT_RESULT = "UPDATE_UNIT_RESULT";
+export const UPDATE_SERVER_STATUS = "UPDATE_SERVER_STATUS";
 
 const initialState = {
     units: populateData(),
     unitValue: "km",
     unitGoal: "miles",
-    unitResult: 0
+    unitResult: 0,
+    serverConnected: null
 };
 
 const unitReducer = (state = initialState, action) => {
@@ -32,6 +35,11 @@ const unitReducer = (state = initialState, action) => {
                     return true;
                 })
             };
+        case UPDATE_UNIT_ARRAY:
+            return {
+                ...state,
+                units: action.payload,
+            }
         case UPDATE_UNIT:
             return {
                 ...state,
@@ -46,6 +54,11 @@ const unitReducer = (state = initialState, action) => {
             return {
                 ...state,
                 unitResult: action.payload,
+            }
+        case UPDATE_SERVER_STATUS:
+            return {
+                ...state,
+                serverConnected: action.payload,
             }
         default:
             return state;

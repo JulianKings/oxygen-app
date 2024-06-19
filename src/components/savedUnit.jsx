@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
 import '../style/savedUnit.css';
 import crossIcon from '../assets/cross.png';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { removeUnit } from '../scripts/redux/unitActions';
 import { deleteUnit } from '../scripts/data/dataManager';
 
 function SavedUnit({unit})
 {
     const dispatch = useDispatch();
+    const serverStatus = useSelector(state => state.unit.serverConnected);
+
     return <>
         <div className='unit-item'>
             <div className='unit-item-content'>
@@ -21,8 +23,44 @@ function SavedUnit({unit})
     
     function attemptDeletion(unit)
     {
-        dispatch(removeUnit(unit._id));
-        deleteUnit(unit);
+        if(serverStatus)
+        {
+            const requestObject = {
+                unit_id: unit._id
+            }
+            fetch("http://localhost:3000/unit/delete", { 
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: "cors",
+                dataType: 'json',
+                body: JSON.stringify(requestObject),
+            })
+            .then((response) => {
+            if (response.status >= 400) {
+                throw new Error("server error");
+            }
+            return response.json();
+            })
+            .then((response) => {
+                if(response.responseStatus)
+                {
+                    if(response.responseStatus === 'unitDeleted')
+                    {                        
+                        dispatch(removeUnit(unit._id));
+                    } else {
+                        // TODO: notify error
+                    }
+                }            
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
+        } else {
+            dispatch(removeUnit(unit._id));
+            deleteUnit(unit);
+        }
     }
 }
 

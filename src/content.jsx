@@ -4,8 +4,8 @@ import exchangeIcon from './assets/exchange.png';
 import heartIcon from './assets/heart.png';
 import SavedUnit from './components/savedUnit';
 import { useDispatch, useSelector } from 'react-redux';
-import { addUnit, updateGoalUnit, updateUnit, updateUnitResult } from './scripts/redux/unitActions';
-import { Fragment, useRef } from 'react';
+import { addUnit, updateGoalUnit, updateServerStatus, updateUnit, updateUnitArray, updateUnitResult } from './scripts/redux/unitActions';
+import { Fragment, useEffect, useRef } from 'react';
 import { appendUnit, getNextUnitId } from './scripts/data/dataManager';
 
 function ContentComponent()
@@ -14,19 +14,57 @@ function ContentComponent()
     const currentUnit = useSelector(state => state.unit.unitValue);
     const goalUnit = useSelector(state => state.unit.unitGoal);
     const unitResult = useSelector(state => state.unit.unitResult);
+    const serverStatus = useSelector(state => state.unit.serverConnected);
     const inputRef = useRef(null);
+
+    useEffect(() => {
+        fetch("http://localhost:3000/unit", {                
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+            dataType: 'json',
+         })
+        .then((response) => {
+          if (response.status >= 400) {
+            dispatch(updateServerStatus(false));
+            throw new Error("server error");
+          }
+          return response.json();
+        })
+        .then((response) => {
+            if(response && response.responseStatus === 'validRequest')
+            {
+                dispatch(updateServerStatus(true));
+                dispatch(updateUnitArray(response.units));
+            } else {
+                dispatch(updateServerStatus(false));
+            }
+        })
+        .catch((error) => {
+            dispatch(updateServerStatus(false));
+            throw new Error(error);
+        })
+    }, []);
 
     const savedUnits = useSelector(state => state.unit.units);
 
     let unitContent = <Fragment>
-        <div className='saved-no-units-caption'>There aren&apos;t any saved units.</div>
+        <div className='saved-no-units-caption'>Loading units...</div>
     </Fragment>
 
-    if(savedUnits.length > 0)
+    if(serverStatus !== null)
     {
-        unitContent = savedUnits.map((unit) => {
-            return <SavedUnit key={unit._id} unit={unit} />;
-        })
+        if(savedUnits.length > 0)
+        {
+            unitContent = savedUnits.map((unit) => {
+                return <SavedUnit key={unit._id} unit={unit} />;
+            })
+        } else {
+            unitContent = <Fragment>
+                <div className='saved-no-units-caption'>There aren&apos;t any saved units.</div>
+            </Fragment>
+        }
     }
 
 
@@ -164,13 +202,51 @@ function ContentComponent()
         if(inputRef.current !== null && inputRef.current.value !== null && inputRef.current.value !== '')
         {
             const inputValue = +(inputRef.current.value);
-            const newUnit = {
-                _id: getNextUnitId(),
-                content: inputValue + currentUnit + ' → ' + unitResult + goalUnit
+            
+            if(serverStatus)
+            {
+                const unitContent = inputValue + currentUnit + ' → ' + unitResult + goalUnit;
+                fetch("http://localhost:3000/unit/add", { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: "cors",
+                    dataType: 'json',
+                    body: JSON.stringify({content: unitContent}),
+                })
+                .then((response) => {
+                if (response.status >= 400) {
+                    throw new Error("server error");
+                }
+                return response.json();
+                })
+                .then((response) => {
+                    console.log(response);
+                    if(response.responseStatus)
+                    {
+                        if(response.responseStatus === 'validUnit')
+                        {
+                            const newUnit = response.unitResult;                            
+                            inputRef.current.value = '';
+                            dispatch(addUnit(newUnit));
+                        } else {
+                            // TODO: notify error
+                        }
+                    }            
+                })
+                .catch((error) => {
+                    throw new Error(error);
+                });
+            } else {
+                const newUnit = {
+                    _id: getNextUnitId(),
+                    content: inputValue + currentUnit + ' → ' + unitResult + goalUnit
+                }
+                inputRef.current.value = '';
+                dispatch(addUnit(newUnit));
+                appendUnit(newUnit);
             }
-            inputRef.current.value = '';
-            dispatch(addUnit(newUnit));
-            appendUnit(newUnit);
         }
     }
 }
