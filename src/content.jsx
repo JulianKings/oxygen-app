@@ -3,13 +3,32 @@ import bigExchangeIcon from './assets/exchange-big.png';
 import exchangeIcon from './assets/exchange.png';
 import heartIcon from './assets/heart.png';
 import SavedUnit from './components/savedUnit';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUnit, updateGoalUnit, updateUnit, updateUnitResult } from './scripts/redux/unitActions';
+import { Fragment, useRef } from 'react';
+import { appendUnit, getNextUnitId } from './scripts/data/dataManager';
 
 function ContentComponent()
 {
-    const mockUnit = {
-        _id: 0,
-        content: '100 miles → 160 km'
+    const dispatch = useDispatch();
+    const currentUnit = useSelector(state => state.unit.unitValue);
+    const goalUnit = useSelector(state => state.unit.unitGoal);
+    const unitResult = useSelector(state => state.unit.unitResult);
+    const inputRef = useRef(null);
+
+    const savedUnits = useSelector(state => state.unit.units);
+
+    let unitContent = <Fragment>
+        <div className='saved-no-units-caption'>There aren&apos;t any saved units.</div>
+    </Fragment>
+
+    if(savedUnits.length > 0)
+    {
+        unitContent = savedUnits.map((unit) => {
+            return <SavedUnit key={unit._id} unit={unit} />;
+        })
     }
+
 
     return <>
         <nav className='navigation'>
@@ -27,28 +46,28 @@ function ContentComponent()
                     <div className='convert-box-title'>convert</div>
                     <div className='convert-box-input'>
                         <div className='convert-box-input-holder'>
-                            <select defaultValue={'km'}>
+                            <select key={currentUnit} defaultValue={currentUnit} onChange={ (event) => { updateSelectorUnit(event.target.value); } }>
                                 <option value='km'>km → miles</option>
-                                <option value='miles'>km → miles</option>
+                                <option value='miles'>miles → km</option>
                                 <option value='m'>m → feet</option>
                                 <option value='feet'>feet → m</option>
                                 <option value='cm'>cm → inches</option>
-                                <option value='inch'>inches → cm</option>
+                                <option value='inches'>inches → cm</option>
                             </select>
-                            <img src={exchangeIcon} alt='Alternate exchange icon' />
+                            <img src={exchangeIcon} alt='Alternate exchange icon' onClick={ () => { updateSelectorUnit(goalUnit); }} />
                         </div>
                         <div className='convert-box-input-holder'>
-                            <input type='number' id='unit'></input>
-                            <label htmlFor='unit'>km</label>
+                            <input ref={inputRef} type='number' id='unit' onChange={ (event) => { calcResult(event.target.value, null) }}></input>
+                            <label htmlFor='unit'>{currentUnit}</label>
                         </div>
                     </div>
                     <div className='convert-box-extra'>
                         <div className='convert-box-save'>
-                            <img src={heartIcon} alt='Save unit' />
+                            <img src={heartIcon} alt='Save unit' onClick={() => { appendCurrentUnit(); }} />
                         </div>
                         <div className='convert-box-result'>
-                            <div className='convert-box-result-value'>62.12</div>
-                            <div className='convert-box-result-unit'>miles</div>
+                            <div className='convert-box-result-value'>{unitResult}</div>
+                            <div className='convert-box-result-unit'>{goalUnit}</div>
                         </div>
                     </div>
                 </div>
@@ -56,10 +75,7 @@ function ContentComponent()
                 <div className='saved-box'>
                     <div className='saved-box-caption'>saved</div>
                     <div className='saved-box-items'>
-                        <SavedUnit key={mockUnit._id} unit={mockUnit} />
-                        <SavedUnit key={mockUnit._id} unit={mockUnit} />
-                        <SavedUnit key={mockUnit._id} unit={mockUnit} />
-                        <SavedUnit key={mockUnit._id} unit={mockUnit} />
+                        {unitContent}
                     </div>
                 </div>
             </div>
@@ -71,7 +87,92 @@ function ContentComponent()
                 <div className='footer-item'>Privacy policy</div>
             </div>
         </footer>
-    </>
+    </>;
+
+    function updateSelectorUnit(value)
+    {
+        let baseUnit = "", goalUnit = "";
+
+        switch(value)
+        {
+            default:
+            case 'km':
+                baseUnit = "km";
+                goalUnit = "miles";
+                break;
+            case 'miles':
+                baseUnit = "miles";
+                goalUnit = "km";
+                break;
+            case 'm':
+                baseUnit = "m";
+                goalUnit = "feet";
+                break;
+            case 'feet':
+                baseUnit = "feet";
+                goalUnit = "m";
+                break;
+            case 'cm':
+                baseUnit = "cm";
+                goalUnit = "inches";
+                break;
+            case 'inches':
+                baseUnit = "inches";
+                goalUnit = "cm";
+                break;
+        }
+
+        dispatch(updateUnit(baseUnit));
+        dispatch(updateGoalUnit(goalUnit));
+
+        if(inputRef.current !== null && inputRef.current.value !== null && inputRef.current.value !== '')
+        {
+            calcResult(inputRef.current.value, baseUnit);            
+        }
+}
+
+    function calcResult(value, updateUnit)
+    {
+        const mathValue = +(value);
+        const usableUnit = (updateUnit === null) ? currentUnit : updateUnit;
+        const result = calculateConversion(mathValue, usableUnit);
+
+        const roundResult = Math.round((result + Number.EPSILON) * 100) / 100;
+        dispatch(updateUnitResult(roundResult));
+    }
+
+    function calculateConversion(mathValue, unit)
+    {
+        switch(unit)
+        {
+            case 'km':
+                return mathValue * 0.621371;
+            case 'miles':
+                return mathValue * 1.609344;
+            case 'm':
+                return mathValue * 3.2808;
+            case 'feet':
+                return mathValue * 0.3048;
+            case 'cm':
+                return mathValue * 0.393701;
+            case 'inches':
+                return mathValue * 2.54;
+        }
+    }
+
+    function appendCurrentUnit() {
+        if(inputRef.current !== null && inputRef.current.value !== null && inputRef.current.value !== '')
+        {
+            const inputValue = +(inputRef.current.value);
+            const newUnit = {
+                _id: getNextUnitId(),
+                content: inputValue + currentUnit + ' → ' + unitResult + goalUnit
+            }
+            inputRef.current.value = '';
+            dispatch(addUnit(newUnit));
+            appendUnit(newUnit);
+        }
+    }
 }
 
 export default ContentComponent
