@@ -76,7 +76,7 @@ body {
     border: 2px solid #FFFFFF;
     background-color: #2E0039;
     color: #fff;
-    margin-top: 51px;
+    margin: 51px 21px;
     width: calc(100% - 38px - 38px);
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 21px;
@@ -155,6 +155,10 @@ Chrome, Safari, Edge, Opera */
     margin-left: 10px;
 }
 
+.convert-box-input .convert-box-input-holder {
+    display: flex;
+}
+
 .convert-box .convert-box-extra {
     display: flex;
     margin-top: 20px;
@@ -193,6 +197,29 @@ Chrome, Safari, Edge, Opera */
     line-height: 36px;
 }
 
+.saved-box {
+    margin: 51px 21px;
+    width: 100%;
+    border-radius: 21px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 24px 0; 
+}
+
+.saved-box-caption {
+    font-weight: 700;
+    color: #676767;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.saved-box .saved-box-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(48%, 1fr));
+    grid-gap: 21px;
+}
+
 .footer {
     grid-area: 3 / 1 / 4 / 2;
     background: #2E0039;
@@ -209,4 +236,56 @@ Chrome, Safari, Edge, Opera */
 
 .footer-item {
     width: 108px;
+}
+
+/* Phone fixing */
+@media only screen and (max-width: 650px) {
+
+    .content-box-navigation {
+        margin-left: 15px;
+    }
+
+    .convert-box {
+        margin: 23px 21px;
+        padding: 11px 21px;
+        padding-bottom: 26px;
+        width: calc(100% - 42px - 42px);
+    }
+
+    .convert-box-input {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .convert-box .convert-box-input img {
+        margin-left: 10px;
+        margin-right: 0px;
+    }    
+
+    .convert-box .convert-box-input input, .convert-box .convert-box-input select {
+        width: 80%;
+    }
+
+    .convert-box-result {
+        width: 42%;
+    }
+
+    .convert-box-result .convert-box-result-unit
+    {
+        width: 40%;
+
+    }
+
+    .saved-box
+    {
+        width: calc(100% - 21px);
+    }
+
+    .saved-box .saved-box-items {
+        display: flex;
+        flex-direction: column;
+        gap: 21px;
+        width: 96%;
+    }
+
 }
